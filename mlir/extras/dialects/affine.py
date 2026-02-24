@@ -49,12 +49,12 @@ class AffExpr:
         return lhs % rhs
 
     @staticmethod
-    def dim_name(d: AffineDimExpr) -> str:
-        return f"d{d.position}"
+    def dim_name(position) -> str:
+        return f"d{position}"
 
     @staticmethod
-    def symbol_name(d: AffineDimExpr) -> str:
-        return f"s{d.position}"
+    def symbol_name(position) -> str:
+        return f"s{position}"
 
     @staticmethod
     def parse(expr):
@@ -67,9 +67,9 @@ class AffExpr:
         if (c := try_cast(AffineConstantExpr, expr)) is not None:
             return sympy.Integer(c.value)
         if (d := try_cast(AffineDimExpr, expr)) is not None:
-            return sympy.Symbol(AffExpr.dim_name(d))
+            return sympy.Symbol(AffExpr.dim_name(d.position))
         if (s := try_cast(AffineSymbolExpr, expr)) is not None:
-            return sympy.Symbol(AffExpr.symbol_name(s))
+            return sympy.Symbol(AffExpr.symbol_name(s.position))
         if (a := try_cast(AffineAddExpr, expr)) is not None:
             lhs = AffExpr.parse(a.lhs)
             rhs = AffExpr.parse(a.rhs)
