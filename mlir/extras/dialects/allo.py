@@ -45,4 +45,4 @@ class GridMap:
         block = op.body.blocks.append(*arg_types)
         with InsertionPoint(block):
             allo_d.yield_([])
-        return op
+        return block
