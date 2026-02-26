@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import sympy
-from ...dialects import affine
 from ...ir import (
     AffineExpr,
     AffineConstantExpr,
