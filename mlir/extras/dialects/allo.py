@@ -9,12 +9,15 @@ from ...ir import (
     IntegerAttr,
     MemRefType,
     InsertionPoint,
+    StringAttr,
 )
 
 
 class GridMap:
+    interface_attr = "interface"  # i: input, o: ouput
+
     @staticmethod
-    def build(args, shardings: list[list[int]], grid: list[int]):
+    def build(inputs, outputs, shardings: list[list[int]], grid: list[int]):
         sharding_attr = ArrayAttr.get(
             [
                 ArrayAttr.get([IntegerAttr.get(i64(), s) for s in sharding])
@@ -22,8 +25,12 @@ class GridMap:
             ]
         )
         grid_attr = DenseI64ArrayAttr.get(grid)
-        op = allo_d.grid_map(args, sharding_attr, grid_attr)
+        args = inputs + outputs
 
+        op = allo_d.grid_map(args, sharding_attr, grid_attr)
+        op.attributes[GridMap.interface_attr] = StringAttr.get(
+            "i" * len(inputs) + "o" * len(outputs)
+        )
         arg_types = []
         for i, arg in enumerate(args):
             memref_type = MemRefType(arg.type)
@@ -46,3 +53,7 @@ class GridMap:
         with InsertionPoint(block):
             allo_d.yield_([])
         return block
+
+    def get_interface(op: allo_d.GridMapOp):
+        attr = op.attributes[GridMap.interface_attr].value
+        return [i == "i" for i in attr]
