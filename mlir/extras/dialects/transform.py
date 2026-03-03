@@ -12,5 +12,7 @@ def module(name: str = None):
     mod = ModuleOp()
     mod.attributes["transform.with_named_sequence"] = UnitAttr.get()
     with InsertionPoint(mod.body):
-        xform_d.named_sequence(name, [xform_d.any_op_t()])
+        seq = xform_d.named_sequence(name, [xform_d.any_op_t()], [])
+        with InsertionPoint(seq.body):
+            xform_d.YieldOp()
     return mod
