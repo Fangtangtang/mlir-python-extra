@@ -31,3 +31,9 @@ def function(
     set_string_attr_if_present(func_op, "itypes", itype_hints)
     set_string_attr_if_present(func_op, "otypes", otype_hints)
     return func_op
+
+
+def signature(function, ip=None):
+    func_op = func.FuncOp(name=function.name.value, type=function.type, ip=ip)
+    func_op.attributes["sym_visibility"] = StringAttr.get("private")
+    return func_op
